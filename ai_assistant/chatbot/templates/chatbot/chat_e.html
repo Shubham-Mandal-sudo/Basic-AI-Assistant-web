@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant (LM Studio)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6cf7;
+            --secondary-color: #6c757d;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --user-msg-bg: #e7f3ff;
+            --ai-msg-bg: #f0f5ff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: #fafafa;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 15px;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-msg-bg);
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background-color: var(--ai-msg-bg);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .sender {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .user .sender {
+            color: #0d6efd;
+        }
+
+        .ai .sender {
+            color: #198754;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        .input-container {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+            background-color: var(--card-bg);
+        }
+
+        .message-input {
+            flex-grow: 1;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: none;
+            min-height: 60px;
+            font-family: inherit;
+            font-size: 16px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .send-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 20px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .send-button:hover {
+            opacity: 0.9;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: var(--secondary-color);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .chat-container {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <h1>AI Assistant (LM Studio)</h1>
+            </div>
+            <p class="subtitle">Powered by advanced language models</p>
+        </header>
+
+        <div class="chat-container">
+            <div class="chat-box">
+                {% for sender, message in conversation %}
+                    <div class="message {{ sender|lower }}-message">
+                        <div class="message-header">
+                            <span class="sender">
+                                {% if sender|lower == "user" %}
+                                    <i class="fas fa-user"></i>
+                                {% else %}
+                                    <i class="fas fa-robot"></i>
+                                {% endif %}
+                                {{ sender }}:
+                            </span>
+                        </div>
+                        <div class="message-content">{{ message }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <form method="post" class="input-container">
+                {% csrf_token %}
+                <textarea class="message-input" name="user_input" placeholder="Type your message..." required></textarea>
+                <button type="submit" class="send-button">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </form>
+        </div>
+
+        <footer>
+            <p>AI Assistant powered by LM Studio • © 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // Auto-scroll to bottom of chat
+        const chatBox = document.querySelector('.chat-box');
+        chatBox.scrollTop = chatBox.scrollHeight;
+        
+        // Auto-resize textarea
+        const textarea = document.querySelector('.message-input');
+        
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Focus on input when page loads
+        textarea.focus();
+    </script>
+</body>
+</html>
