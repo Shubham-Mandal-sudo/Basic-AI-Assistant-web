@@ -1,4 +1,3 @@
-````markdown
 # 🧠 AI Assistant (Django + LM Studio)
 
 A simple **AI Assistant Web App** built with **Django** that connects to a **local AI model** via **LM Studio**.  
@@ -20,7 +19,7 @@ The assistant works like a mini ChatGPT — users can type queries, get response
 - Django 4+  
 - LM Studio (for running local models)  
 - Installed Python libraries:
-  ```bash
+````bash
   pip install django requests
 ````
 
