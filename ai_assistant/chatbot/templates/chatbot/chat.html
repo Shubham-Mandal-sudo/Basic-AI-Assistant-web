@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant (LM Studio)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
     <style>
         :root {
             --card-bg: rgba(255, 255, 255, 0.1);
@@ -246,6 +250,10 @@
         .message-content {
             line-height: 1.5;
         }
+        .message-content pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        .message-content code { font-family: monospace; }
+        .message-content h1, h2, h3 { margin-top: 15px; }
+        .message-content ul, ol { margin-left: 20px; }
 
         .typing-indicator {
             display: none;
@@ -419,7 +427,7 @@
                                 <span class="timestamp">{{ message.timestamp }}</span>
                             </div>
                             <div class="message-content">
-                                {{ message.message }}
+                                {{ message.message|safe }}
                             </div>
                         </div>
                     {% endfor %}
