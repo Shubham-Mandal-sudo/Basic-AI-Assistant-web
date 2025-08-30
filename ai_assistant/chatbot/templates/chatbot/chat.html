@@ -386,7 +386,7 @@
         <header>
             <div class="logo">
                 <i class="fas fa-robot"></i>
-                <h1>AI Assistant (LM Studio)</h1>
+                <h1>AI Assistant</h1>
             </div>
             <button class="theme-toggle" id="themeToggle">
                 <i class="fas fa-moon"></i>
@@ -397,27 +397,29 @@
             <div class="chat-header">
                 <div class="model-info">
                     <span class="online-indicator"></span>
-                    <span>LM Studio Model v2.1</span>
+                    <span>Llama 3.2 3B</span>
                 </div>
                 <div class="chat-actions">
-                    <button title="Clear conversation"><i class="fas fa-broom"></i></button>
-                    <button title="Export chat"><i class="fas fa-download"></i></button>
+                <form method="post">
+                    {% csrf_token %}
+                    <button title="Clear conversation" type="submit" name="new_chat" value="1"><i class="fas fa-broom"></i></button>
+                </form>
                 </div>
             </div>
 
             <div class="chat-box" id="chatBox">
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="message {% if message.sender == 'user' %}user-message{% else %}ai-message{% endif %}">
+                {% if conversation %}
+                    {% for message in conversation %}
+                        <div class="message {% if message.sender == 'You' %}user-message{% else %}ai-message{% endif %}">
                             <div class="message-header">
                                 <span class="sender">
-                                    <i class="fas fa-{% if message.sender == 'user' %}user{% else %}robot{% endif %}"></i> 
+                                    <i class="fas fa-{% if message.sender == 'You' %}user{% else %}robot{% endif %}"></i> 
                                     {{ message.sender|title }}
                                 </span>
                                 <span class="timestamp">{{ message.timestamp }}</span>
                             </div>
                             <div class="message-content">
-                                {{ message.content }}
+                                {{ message.message }}
                             </div>
                         </div>
                     {% endfor %}
@@ -453,7 +455,7 @@
         </section>
 
         <footer>
-            <p>AI Assistant powered by LM Studio • © 2023 • All interactions are confidential</p>
+            <p>AI Assistant powered by LM Studio • © 2025 • All interactions are confidential</p>
         </footer>
     </div>
 
